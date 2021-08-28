@@ -62,14 +62,12 @@ def command_task1(update, context):
 
 
 def command_task4(update, context):
-    zakaz =update.message.text
-
     update.message.reply_text(
         "Siz bilan bog\'lanish uchun raqamingizni yuboring📲\nraqam yuborish tugmasini bosing!👇👇",
         reply_markup=phone_button())
-    price = update.message.text
-    user_id = update.effective_user.id
-    task_update_price(price, user_id)
+    order = update.message.text
+    id = order_create(order, update.effective_user.id)
+    update_order_id(id, update.effective_user.id)
     return state_phone
 
 
@@ -77,47 +75,48 @@ def command_phone(update, context):
     contact = update.effective_message.contact
     phone = contact.phone_number
     user_id = update.effective_user.id
-    task_update_phone(phone, user_id)
-    # update.message.reply_text(f'O\'zingiz uchun kerakli buyruqlardan birini tanlang👇👇')
-    update.message.reply_text('mintaqa', reply_markup=ReplyKeyboardRemove())
-    update.message.reply_text('Arizani yakunlash uchun Yashash manzilingizni tanlang👇👇',
-                              reply_markup=mintaqa_buttons())
+    update.message.reply_text(
+        'Mahsulotlarni yetkazib berish manzilini aniqlash uchun telefoninggizning lokatsiyasini yoqqan holda Lokatsiya yuborish tugmasi bosing👇👇',
+        reply_markup=location_button())
+    order_update_phone(phone, user_id)
     return state_mintaqa
 
 
 def command_mintaqa(update, context):
+    update.message.reply_text('to\'lov', reply_markup=ReplyKeyboardRemove())
+    update.message.reply_text(
+        "Arizani yakunlash uchun to'lov turini tanlang👇👇",
+        reply_markup=button_tulov_type())
+    location = update.message.location
+    latitude = location['latitude']
+    longitude = location['longitude']
+    user_id = update.effective_user.id
+    order_update_location(latitude, longitude, user_id)
+
+    return state_task2
+
+def tulov_type(update, context):
     query = update.callback_query
     A = query.data
     query.message.delete()
     user_id = update.effective_user.id
-    task_update_region(A, user_id)
-    query.message.reply_text(
-        "Arizangiz muaffaqiyatli qabul qilindi\ntopshirig'ingiz bo'yicha takliflar sizga tez orada jo'natiladi. Agar takliflar bir nechta bo'lsa o'zingizga ma'qulini tanlashingiz mumkin😊😊.",
-        reply_markup=main_buttons())
-    task = get_task(user_id)
+    update_tulov_type(A,user_id)
+    query.message.reply_html("Arizangiz muaffaqiyatli qabul qilindi\nTez orada siz bilan bog'lanamiz!", reply_markup=main_buttons())
+    order = get_order(user_id)
     user = get_user(user_id)
-    xabar = f'NEW TASK:\nFoydalanuvchi ismi: {user[1]}\n' \
-            f'Foydalanuvchi username: @{user[2]}\n' \
-            f'Foydalanuvchi id: {user[6]}\n' \
-            f'Foydalanuvchi telefon raqami: {task[6]}\n' \
-            f'Foydalanuvchi yashash manzili: {task[5]}\n' \
-            f'Task name: {task[2]}\n' \
-            f'Task description: {task[7]}\n' \
-            f'Task price: {task[4]}\n'
-    if task[3]:
-        soni = 0
-        for i in admins:
-            try:
-                context.bot.send_photo(chat_id=i, photo=open(f'rasmlar/photo{task[0]}.jpg', 'rb'), caption=xabar)
-            except Exception as s:
-                print(s)
-    else:
-        for i in admins:
-            try:
-                context.bot.send_message(chat_id=i, text=xabar)
-            except Exception as s:
-                print(s)
-
+    xabar = f'NEW ORDER:\nFoydalanuvchi ismi: {user[1]}\n' \
+            f'Foydalanuvchi username: @{user[6]}\n' \
+            f'Foydalanuvchi id: {user[2]}\n' \
+            f'Foydalanuvchi telefon raqami: {user[3]}\n' \
+            f'Foydalanuvchi yashash manzili(latitude): {order[4]}\n' \
+            f'Foydalanuvchi yashash manzili(longitude): {order[3]}\n' \
+            f'to\'lov turi: {order[-1]}\n' \
+            f'Orders: {order[1]}\n'
+    for i in admins:
+        try:
+            context.bot.send_message(chat_id=i, text=xabar)
+        except Exception as s:
+            print(s)
     return state_main
 
 
@@ -136,7 +135,7 @@ def contact(update, context):
 
 
 conv_hand = ConversationHandler(
-    entry_points=[CommandHandler('start', start)],
+    entry_points=[MessageHandler(Filters.text, start)],
     states={
         state_main: [
             MessageHandler(Filters.regex('^(' + '📝Buyurma qilish' + ')$'), task),
@@ -153,12 +152,15 @@ conv_hand = ConversationHandler(
             MessageHandler(Filters.contact, command_phone)
         ],
         state_mintaqa: [
-            CallbackQueryHandler(command_mintaqa)
+            MessageHandler(Filters.location, command_mintaqa)
+        ],
+        state_task2: [
+            CallbackQueryHandler(tulov_type)
         ]
     },
     fallbacks=[CommandHandler('start', start)]
 )
-updater = Updater('1975468079:AAEip8oNIoQT8OG7BMc0F2OFykHe8O0BrCg')
+updater = Updater('1930735104:AAGOgPFseJ6eOgpBcIgF5JFYRnq4zAZhebY')
 updater.dispatcher.add_handler(conv_hand)
 
 updater.start_polling()

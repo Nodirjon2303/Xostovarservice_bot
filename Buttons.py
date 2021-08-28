@@ -16,13 +16,13 @@ def main_buttons():
     return buttons
 
 
-def button_photo():
+def button_tulov_type():
     button = [
         [
-            InlineKeyboardButton('HA', callback_data='ha')
+            InlineKeyboardButton('Naqd pul', callback_data='naqd')
         ],
         [
-            InlineKeyboardButton("Yo'q", callback_data='yuq')
+            InlineKeyboardButton("Karta orqali", callback_data='karta')
         ]
     ]
     return InlineKeyboardMarkup(button)
@@ -45,19 +45,11 @@ def phone_button():
     )
     return button
 
-
-def mintaqa_buttons():
-    regions = get_regions()
-    buttons = []
-    temp = []
-    for i in regions:
-        try:
-            temp.append(InlineKeyboardButton(f'{i[0]}', callback_data=f'{i[0]}'))
-        except Exception as e:
-            print(e)
-        if len(temp) == 2:
-            buttons.append(temp)
-            temp = []
-    if len(temp) == 1:
-        buttons.append(temp)
-    return InlineKeyboardMarkup(buttons)
+def location_button():
+    con_keyboard = KeyboardButton(text='Send location', request_location=True)
+    button = ReplyKeyboardMarkup(
+        [
+            [con_keyboard]
+        ], resize_keyboard=True
+    )
+    return button

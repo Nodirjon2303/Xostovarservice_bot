@@ -1,11 +1,26 @@
 import psycopg2
 
+# host = "ec2-52-45-183-77.compute-1.amazonaws.com"
+# database = 'daapamgkh1vf58'
+# user = 'mlrhattekvwvkq'
+# password = 'b4fdbc46c929a6f5ea6458e18dc19ef8a349372990bfc29a314595c507699377'
+# conn = psycopg2.connect(
+#     host=host,
+#     database=database,
+#     user=user,
+#     password=password,
+#     port=5432
+# )
+# cursor = conn.cursor()
+# cursor.execute("ALTER TABLE orders ADD COLUMN tulov_type VARCHAR ")
+# conn.commit()
+# print('succes')
 
 def get_users():
-    host = "ec2-35-174-56-18.compute-1.amazonaws.com"
-    database = 'deng6efpk22ass'
-    user = 'vunsszpfqfoilr'
-    password = '9da912988502a0e913534cea85939d231bd7e762c2110407cdf8bbc578255954'
+    host = "ec2-52-45-183-77.compute-1.amazonaws.com"
+    database = 'daapamgkh1vf58'
+    user = 'mlrhattekvwvkq'
+    password = 'b4fdbc46c929a6f5ea6458e18dc19ef8a349372990bfc29a314595c507699377'
     conn = psycopg2.connect(
         host=host,
         database=database,
@@ -23,11 +38,11 @@ def get_users():
     return res
 
 
-def get_task_id(user_id):
-    host = "ec2-35-174-56-18.compute-1.amazonaws.com"
-    database = 'deng6efpk22ass'
-    user = 'vunsszpfqfoilr'
-    password = '9da912988502a0e913534cea85939d231bd7e762c2110407cdf8bbc578255954'
+def get_order_id(user_id):
+    host = "ec2-52-45-183-77.compute-1.amazonaws.com"
+    database = 'daapamgkh1vf58'
+    user = 'mlrhattekvwvkq'
+    password = 'b4fdbc46c929a6f5ea6458e18dc19ef8a349372990bfc29a314595c507699377'
     conn = psycopg2.connect(
         host=host,
         database=database,
@@ -37,7 +52,7 @@ def get_task_id(user_id):
     )
     cursor = conn.cursor()
     try:
-        cursor.execute(f"SELECT task_id FROM users WHERE user_id = {user_id}")
+        cursor.execute(f"SELECT currunt_order FROM users WHERE user_id = {user_id}")
         res = cursor.fetchall()
     except Exception as e:
         print(e)
@@ -46,10 +61,10 @@ def get_task_id(user_id):
 
 
 def add_user(first_name, id, username):
-    host = "ec2-35-174-56-18.compute-1.amazonaws.com"
-    database = 'deng6efpk22ass'
-    user = 'vunsszpfqfoilr'
-    password = '9da912988502a0e913534cea85939d231bd7e762c2110407cdf8bbc578255954'
+    host = "ec2-52-45-183-77.compute-1.amazonaws.com"
+    database = 'daapamgkh1vf58'
+    user = 'mlrhattekvwvkq'
+    password = 'b4fdbc46c929a6f5ea6458e18dc19ef8a349372990bfc29a314595c507699377'
     conn = psycopg2.connect(
         host=host,
         database=database,
@@ -68,11 +83,11 @@ def add_user(first_name, id, username):
     conn.close()
 
 
-def task_create(name, user_id):
-    host = "ec2-35-174-56-18.compute-1.amazonaws.com"
-    database = 'deng6efpk22ass'
-    user = 'vunsszpfqfoilr'
-    password = '9da912988502a0e913534cea85939d231bd7e762c2110407cdf8bbc578255954'
+def order_create(order, user_id):
+    host = "ec2-52-45-183-77.compute-1.amazonaws.com"
+    database = 'daapamgkh1vf58'
+    user = 'mlrhattekvwvkq'
+    password = 'b4fdbc46c929a6f5ea6458e18dc19ef8a349372990bfc29a314595c507699377'
     conn = psycopg2.connect(
         host=host,
         database=database,
@@ -84,8 +99,8 @@ def task_create(name, user_id):
     cursor = conn.cursor()
     try:
         cursor.execute(
-            "INSERT INTO Tasks (task_name ,user_id) VALUES (%s , %s)",
-            (name, user_id))
+            "INSERT INTO orders (orders ,user_id) VALUES (%s , %s)",
+            (order, user_id))
         conn.commit()
     except Exception as e:
         print(e)
@@ -93,7 +108,7 @@ def task_create(name, user_id):
 
     try:
         cursor.execute(
-            f"SELECT * FROM Tasks WHERE task_name='{name}'")
+            f"SELECT * FROM orders WHERE orders='{order}'")
         res = cursor.fetchall()
         return int(res[0][0])
     except:
@@ -102,36 +117,13 @@ def task_create(name, user_id):
     conn.close()
 
 
-def task_update_descrip(description, user_id):
-    host = "ec2-35-174-56-18.compute-1.amazonaws.com"
-    database = 'deng6efpk22ass'
-    user = 'vunsszpfqfoilr'
-    password = '9da912988502a0e913534cea85939d231bd7e762c2110407cdf8bbc578255954'
-    conn = psycopg2.connect(
-        host=host,
-        database=database,
-        user=user,
-        password=password,
-        port=5432
-    )
-
-    cursor = conn.cursor()
-    try:
-        cursor.execute(
-            f"UPDATE  Tasks SET description = '{description}' WHERE id = {get_task_id(user_id)}",
-            {'description': description})
-        conn.commit()
-    except Exception as e:
-        print(e)
-        print("There is something wrong with your code in update description")
-    conn.close()
 
 
-def task_update_phone(phone_number, user_id):
-    host = "ec2-35-174-56-18.compute-1.amazonaws.com"
-    database = 'deng6efpk22ass'
-    user = 'vunsszpfqfoilr'
-    password = '9da912988502a0e913534cea85939d231bd7e762c2110407cdf8bbc578255954'
+def order_update_phone(phone_number, user_id):
+    host = "ec2-52-45-183-77.compute-1.amazonaws.com"
+    database = 'daapamgkh1vf58'
+    user = 'mlrhattekvwvkq'
+    password = 'b4fdbc46c929a6f5ea6458e18dc19ef8a349372990bfc29a314595c507699377'
     conn = psycopg2.connect(
         host=host,
         database=database,
@@ -142,18 +134,20 @@ def task_update_phone(phone_number, user_id):
     cursor = conn.cursor()
     try:
         cursor.execute(
-            f"UPDATE  Tasks SET phone_number = '{phone_number}' WHERE id = {get_task_id(user_id)}")
+            f"UPDATE  users SET phone_number1 = '{phone_number}' WHERE user_id = {user_id}")
         conn.commit()
     except:
         print("There is something wrong with your code updating phone")
     conn.close()
 
 
-def task_update_photo(photo_path, user_id):
-    host = "ec2-35-174-56-18.compute-1.amazonaws.com"
-    database = 'deng6efpk22ass'
-    user = 'vunsszpfqfoilr'
-    password = '9da912988502a0e913534cea85939d231bd7e762c2110407cdf8bbc578255954'
+
+
+def order_update_location(latitude,longitude ,  user_id):
+    host = "ec2-52-45-183-77.compute-1.amazonaws.com"
+    database = 'daapamgkh1vf58'
+    user = 'mlrhattekvwvkq'
+    password = 'b4fdbc46c929a6f5ea6458e18dc19ef8a349372990bfc29a314595c507699377'
     conn = psycopg2.connect(
         host=host,
         database=database,
@@ -164,62 +158,19 @@ def task_update_photo(photo_path, user_id):
     cursor = conn.cursor()
     try:
         cursor.execute(
-            f"UPDATE  Tasks SET photo = '{photo_path}' WHERE id = {get_task_id(user_id)}")
+            f"UPDATE  orders SET latitude = '{latitude}', atitude = '{longitude}' WHERE id = {get_order_id(user_id)}")
         conn.commit()
-    except:
-        print("There is something wrong with your code updating photo")
-    conn.close()
-
-
-def task_update_price(price, user_id):
-    host = "ec2-35-174-56-18.compute-1.amazonaws.com"
-    database = 'deng6efpk22ass'
-    user = 'vunsszpfqfoilr'
-    password = '9da912988502a0e913534cea85939d231bd7e762c2110407cdf8bbc578255954'
-    conn = psycopg2.connect(
-        host=host,
-        database=database,
-        user=user,
-        password=password,
-        port=5432
-    )
-    cursor = conn.cursor()
-    try:
-        cursor.execute(
-            f"UPDATE  Tasks SET price = '{price}' WHERE id = {get_task_id(user_id)}")
-        conn.commit()
-    except:
-        print("There is something wrong with your code updating price")
-    conn.close()
-
-
-def task_update_region(name, user_id):
-    host = "ec2-35-174-56-18.compute-1.amazonaws.com"
-    database = 'deng6efpk22ass'
-    user = 'vunsszpfqfoilr'
-    password = '9da912988502a0e913534cea85939d231bd7e762c2110407cdf8bbc578255954'
-    conn = psycopg2.connect(
-        host=host,
-        database=database,
-        user=user,
-        password=password,
-        port=5432
-    )
-    cursor = conn.cursor()
-    try:
-        cursor.execute(
-            f"UPDATE  Tasks SET region = '{name}' WHERE id = {get_task_id(user_id)}")
-        conn.commit()
-    except:
+    except Exception as e:
+        print(e)
         print("There is something wrong with your code")
     conn.close()
 
 
-def update_task_id(id, user_id):
-    host = "ec2-35-174-56-18.compute-1.amazonaws.com"
-    database = 'deng6efpk22ass'
-    user = 'vunsszpfqfoilr'
-    password = '9da912988502a0e913534cea85939d231bd7e762c2110407cdf8bbc578255954'
+def update_order_id(id, user_id):
+    host = "ec2-52-45-183-77.compute-1.amazonaws.com"
+    database = 'daapamgkh1vf58'
+    user = 'mlrhattekvwvkq'
+    password = 'b4fdbc46c929a6f5ea6458e18dc19ef8a349372990bfc29a314595c507699377'
     conn = psycopg2.connect(
         host=host,
         database=database,
@@ -230,7 +181,7 @@ def update_task_id(id, user_id):
     cursor = conn.cursor()
     try:
         cursor.execute(
-            f"UPDATE  users SET task_id = {id} WHERE user_id={user_id}",
+            f"UPDATE  users SET currunt_order = {id} WHERE user_id={user_id}",
             {'id': id})
         conn.commit()
     except Exception as e:
@@ -239,11 +190,11 @@ def update_task_id(id, user_id):
     conn.close()
 
 
-def get_regions():
-    host = "ec2-35-174-56-18.compute-1.amazonaws.com"
-    database = 'deng6efpk22ass'
-    user = 'vunsszpfqfoilr'
-    password = '9da912988502a0e913534cea85939d231bd7e762c2110407cdf8bbc578255954'
+def get_order(user_id):
+    host = "ec2-52-45-183-77.compute-1.amazonaws.com"
+    database = 'daapamgkh1vf58'
+    user = 'mlrhattekvwvkq'
+    password = 'b4fdbc46c929a6f5ea6458e18dc19ef8a349372990bfc29a314595c507699377'
     conn = psycopg2.connect(
         host=host,
         database=database,
@@ -253,29 +204,7 @@ def get_regions():
     )
     cursor = conn.cursor()
     try:
-        cursor.execute(f"SELECT name FROM regions")
-        res = cursor.fetchall()
-    except Exception as e:
-        print(e)
-    conn.close()
-    return res
-
-
-def get_task(user_id):
-    host = "ec2-35-174-56-18.compute-1.amazonaws.com"
-    database = 'deng6efpk22ass'
-    user = 'vunsszpfqfoilr'
-    password = '9da912988502a0e913534cea85939d231bd7e762c2110407cdf8bbc578255954'
-    conn = psycopg2.connect(
-        host=host,
-        database=database,
-        user=user,
-        password=password,
-        port=5432
-    )
-    cursor = conn.cursor()
-    try:
-        cursor.execute(f"SELECT * FROM Tasks where id = {get_task_id(user_id)}")
+        cursor.execute(f"SELECT * FROM orders where id = {get_order_id(user_id)}")
         res = cursor.fetchall()
     except Exception as e:
         print(e)
@@ -284,10 +213,10 @@ def get_task(user_id):
 
 
 def get_user(user_id):
-    host = "ec2-35-174-56-18.compute-1.amazonaws.com"
-    database = 'deng6efpk22ass'
-    user = 'vunsszpfqfoilr'
-    password = '9da912988502a0e913534cea85939d231bd7e762c2110407cdf8bbc578255954'
+    host = "ec2-52-45-183-77.compute-1.amazonaws.com"
+    database = 'daapamgkh1vf58'
+    user = 'mlrhattekvwvkq'
+    password = 'b4fdbc46c929a6f5ea6458e18dc19ef8a349372990bfc29a314595c507699377'
     conn = psycopg2.connect(
         host=host,
         database=database,
@@ -304,3 +233,25 @@ def get_user(user_id):
         print(e)
     conn.close()
     return res[0]
+
+def update_tulov_type(type, user_id):
+    host = "ec2-52-45-183-77.compute-1.amazonaws.com"
+    database = 'daapamgkh1vf58'
+    user = 'mlrhattekvwvkq'
+    password = 'b4fdbc46c929a6f5ea6458e18dc19ef8a349372990bfc29a314595c507699377'
+    conn = psycopg2.connect(
+        host=host,
+        database=database,
+        user=user,
+        password=password,
+        port=5432
+    )
+    cursor = conn.cursor()
+    try:
+        cursor.execute(
+            f"UPDATE  orders SET tulov_type = '{type}' WHERE id={get_order_id(user_id)}")
+        conn.commit()
+    except Exception as e:
+        print(e)
+        print("There is something wrong with your code in update")
+    conn.close()
