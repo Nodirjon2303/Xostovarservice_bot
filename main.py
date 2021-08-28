@@ -95,13 +95,15 @@ def command_mintaqa(update, context):
 
     return state_task2
 
+
 def tulov_type(update, context):
     query = update.callback_query
     A = query.data
     query.message.delete()
     user_id = update.effective_user.id
-    update_tulov_type(A,user_id)
-    query.message.reply_html("Arizangiz muaffaqiyatli qabul qilindi\nTez orada siz bilan bog'lanamiz!", reply_markup=main_buttons())
+    update_tulov_type(A, user_id)
+    query.message.reply_html("Arizangiz muaffaqiyatli qabul qilindi\nTez orada siz bilan bog'lanamiz!",
+                             reply_markup=main_buttons())
     order = get_order(user_id)
     user = get_user(user_id)
     xabar = f'NEW ORDER:\nFoydalanuvchi ismi: {user[1]}\n' \
@@ -123,14 +125,14 @@ def tulov_type(update, context):
 def contact(update, context):
     user_id = update.effective_user.id
     update.message.reply_html(
-        f'Aссалому алайкум\nБот юзасидан фикр ва таклифларингизни юборишингиз мумкин👇👇\n  @labbay_admin\n☎️📞 +998997910791',
+        f'Aссалому алайкум\nБот юзасидан фикр ва таклифларингизни юборишингиз мумкин👇👇\n  @labbay_admin\n☎️📞 +998712007702',
         reply_markup=main_buttons())
-    if user_id == 881319779 or 611003999:
+    if user_id in admins:
         users = get_users()
         all_users = []
         for i in users:
             all_users.append(i[0])
-        update.message.reply_text("Foydalanuvchilar soni:", len(all_users))
+        context.bot.send_message(chat_id=user_id, text=f"Foydalanuvchilar soni: {len(all_users)}")
     return state_main
 
 
