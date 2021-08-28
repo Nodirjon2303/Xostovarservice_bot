@@ -162,7 +162,7 @@ conv_hand = ConversationHandler(
     },
     fallbacks=[CommandHandler('start', start)]
 )
-updater = Updater('1930735104:AAGOgPFseJ6eOgpBcIgF5JFYRnq4zAZhebY')
+updater = Updater('YOUR_BOT_TOKEN')
 updater.dispatcher.add_handler(conv_hand)
 
 updater.start_polling()
